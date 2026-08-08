@@ -6,7 +6,7 @@ export const seedProfile: CandidateProfile = {
   name: 'Nadia Rachel',
   email: 'nadia.rachel@gmail.com',
   title: 'Senior Frontend Engineer',
-  avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&h=120&auto=format&fit=crop&q=80',
+  avatarUrl: '/default-avatar.png',
   targetRoles: ['Senior Frontend Engineer', 'Full Stack Engineer', 'Staff Engineer', 'Engineering Lead'],
   skills: ['React', 'TypeScript', 'Next.js', 'Node.js', 'Firebase', 'GraphQL', 'Tailwind CSS', 'Python', 'AWS'],
   preferredLocations: ['San Francisco, CA', 'Remote', 'New York, NY'],

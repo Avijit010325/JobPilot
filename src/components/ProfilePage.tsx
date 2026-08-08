@@ -212,7 +212,11 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ avatarUrl, name, onChan
   const [hovering, setHovering]     = useState(false);
   const [showMenu, setShowMenu]     = useState(false);
   const [showCamera, setShowCamera] = useState(false);
-  const [preview, setPreview]       = useState<string | undefined>(avatarUrl);
+  const [preview, setPreview]       = useState<string | undefined>(avatarUrl || '/default-avatar.png');
+
+  useEffect(() => {
+    setPreview(avatarUrl || '/default-avatar.png');
+  }, [avatarUrl]);
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -234,7 +238,7 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ avatarUrl, name, onChan
     setShowCamera(false);
   };
 
-  const initials = name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+  const isCustomPhoto = preview && preview !== '/default-avatar.png';
 
   return (
     <div style={{ position: 'relative', display: 'inline-block' }}>
@@ -246,6 +250,7 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ avatarUrl, name, onChan
         style={{
           width:96, height:96, borderRadius:'50%', border:'3px solid var(--border-glow)',
           cursor:'pointer', position:'relative', overflow:'hidden', flexShrink:0,
+          background: 'var(--bg-card-raised)',
           boxShadow: hovering ? '0 0 0 5px rgba(168,85,247,0.18)' : '0 0 0 0 transparent',
           transition:'box-shadow 0.2s'
         }}
@@ -254,10 +259,14 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ avatarUrl, name, onChan
         onClick={() => setShowMenu(v => !v)}
         title="Change profile photo"
       >
-        {preview
-          ? <img src={preview} alt={name} style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }} onError={() => setPreview(undefined)} />
-          : <div style={{ width:'100%', height:'100%', background:'var(--gradient-main)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.6rem', fontWeight:800, fontFamily:'var(--font-display)', color:'#fff' }}>{initials}</div>
-        }
+        <img
+          src={preview || '/default-avatar.png'}
+          alt={name}
+          style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = '/default-avatar.png';
+          }}
+        />
         <div style={{ position:'absolute', inset:0, background:'rgba(0,0,0,0.52)', display:'flex', alignItems:'center', justifyContent:'center', opacity: hovering ? 1 : 0, transition:'opacity 0.18s' }}>
           <Camera size={22} color="#fff" />
         </div>
@@ -272,7 +281,7 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ avatarUrl, name, onChan
             {[
               { icon: <Camera size={16} color="var(--purple)" />, label:'Take a Photo', iconBg:'var(--gradient-subtle)', iconBorder:'var(--border-glow)', action: () => { setShowMenu(false); setShowCamera(true); }, color: 'var(--text-primary)' },
               { icon: <ImageIcon size={16} color="var(--text-secondary)" />, label:'Choose from Gallery', iconBg:'var(--bg-card-raised)', iconBorder:'var(--border)', action: () => { fileInputRef.current?.click(); setShowMenu(false); }, color: 'var(--text-primary)' },
-              ...(preview ? [{ icon: <X size={15} color="var(--red)" />, label:'Remove Photo', iconBg:'var(--red-dim)', iconBorder:'var(--red-border)', action: () => { setPreview(undefined); onChange(''); setShowMenu(false); }, color: 'var(--red)' }] : []),
+              ...(isCustomPhoto ? [{ icon: <X size={15} color="var(--red)" />, label:'Reset to Default Avatar', iconBg:'var(--red-dim)', iconBorder:'var(--red-border)', action: () => { setPreview('/default-avatar.png'); onChange('/default-avatar.png'); setShowMenu(false); }, color: 'var(--red)' }] : []),
             ].map(item => (
               <button key={item.label} type="button" onClick={item.action}
                 style={{ display:'flex', alignItems:'center', gap:10, width:'100%', textAlign:'left', padding:'9px 12px', borderRadius:10, border:'none', cursor:'pointer', background:'transparent', color: item.color, fontSize:'0.875rem', fontWeight:500, fontFamily:'var(--font-sans)', transition:'background 0.12s' }}

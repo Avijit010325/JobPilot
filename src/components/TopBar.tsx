@@ -178,13 +178,12 @@ export const TopBar: React.FC<TopBarProps> = ({
             aria-label="Go to profile"
             id="profile-pill-btn"
           >
-            {profile.avatarUrl ? (
-              <img src={profile.avatarUrl} alt={profile.name} style={{ width:32, height:32, borderRadius:'50%', objectFit:'cover', flexShrink:0 }} onError={e => { (e.target as HTMLImageElement).style.display='none'; }}/>
-            ) : (
-              <div style={{ width:32, height:32, borderRadius:'50%', background:'var(--gradient-main)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'0.8rem', fontWeight:800, color:'#fff', fontFamily:'var(--font-display)', flexShrink:0 }}>
-                {profile.name.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase()}
-              </div>
-            )}
+            <img
+              src={profile.avatarUrl || '/default-avatar.png'}
+              alt={profile.name}
+              style={{ width:32, height:32, borderRadius:'50%', objectFit:'cover', flexShrink:0 }}
+              onError={e => { (e.target as HTMLImageElement).src = '/default-avatar.png'; }}
+            />
             <div style={{ lineHeight:1.3 }}>
               <div style={{ fontSize:'0.82rem', fontWeight:700, color:'var(--text-primary)' }}>{profile.name}</div>
               <div style={{ fontSize:'0.7rem', color:'var(--text-muted)' }}>{profile.title}</div>
