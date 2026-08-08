@@ -193,9 +193,14 @@ export default function App() {
 
   return (
     <div className="app-shell">
+      <a href="#main-content" className="skip-link">Skip to main content</a>
+      <div className="sr-only" aria-live="polite" aria-atomic="true">
+        Current page: {activePage}. {followUpCount > 0 ? `${followUpCount} applications require follow-up.` : ''}
+      </div>
+
       <Sidebar activePage={activePage} onNavigate={setActivePage} followUpCount={followUpCount} draftCount={draftCount} />
 
-      <main className="page-content">
+      <main id="main-content" className="page-content" tabIndex={-1}>
         <TopBar
           profile={profile}
           activePage={activePage}

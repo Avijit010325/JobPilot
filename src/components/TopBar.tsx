@@ -101,7 +101,9 @@ export const TopBar: React.FC<TopBarProps> = ({
           <button
             className="btn-icon"
             style={{ position:'relative' }}
-            aria-label="Notifications"
+            aria-label={`Notifications, ${unread} unread`}
+            aria-haspopup="true"
+            aria-expanded={showNotif}
             onClick={() => setShowNotif(v => !v)}
             id="notif-bell-btn"
           >
@@ -115,7 +117,7 @@ export const TopBar: React.FC<TopBarProps> = ({
 
           {/* Notification panel */}
           {showNotif && (
-            <div style={{ position:'absolute', top:'calc(100% + 12px)', right:0, width:340, background:'var(--bg-card-raised)', border:'1px solid var(--border-medium)', borderRadius:18, zIndex:60, boxShadow:'0 20px 60px rgba(0,0,0,0.4)', overflow:'hidden', animation:'slideUp 0.18s ease' }}>
+            <div role="dialog" aria-label="Notifications panel" style={{ position:'absolute', top:'calc(100% + 12px)', right:0, width:340, background:'var(--bg-card-raised)', border:'1px solid var(--border-medium)', borderRadius:18, zIndex:60, boxShadow:'0 20px 60px rgba(0,0,0,0.4)', overflow:'hidden', animation:'slideUp 0.18s ease' }}>
               {/* Panel header */}
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'16px 18px 12px', borderBottom:'1px solid var(--border)' }}>
                 <div style={{ fontSize:'0.9rem', fontWeight:700, color:'var(--text-primary)' }}>

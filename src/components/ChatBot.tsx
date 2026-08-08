@@ -450,7 +450,7 @@ export const ChatBot: React.FC = () => {
           </div>
 
           {/* Messages */}
-          <div className="chatbot-messages">
+          <div className="chatbot-messages" role="region" aria-label="Chatbot Conversation History" aria-live="polite">
             {messages.map(msg => (
               <div key={msg.id} className={`chatbot-msg chatbot-msg-${msg.role}`}>
                 {msg.role === 'bot' && (

@@ -1656,14 +1656,55 @@ img { max-width: 100%; display: block; }
 
 /* ─── Global focus-visible ring (accessibility) ─── */
 :focus-visible {
-  outline: 2px solid var(--magenta);
-  outline-offset: 2px;
+  outline: 3px solid var(--magenta);
+  outline-offset: 3px;
 }
 button:focus:not(:focus-visible),
 input:focus:not(:focus-visible),
 select:focus:not(:focus-visible),
 textarea:focus:not(:focus-visible) {
   outline: none;
+}
+
+/* ─── Accessibility: Skip Link & Screen Reader Utilities ─── */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 16px;
+  z-index: 1000;
+  padding: 12px 20px;
+  background: var(--magenta);
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(217, 70, 239, 0.4);
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 16px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ─── Accessibility: Reduced Motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* ─── Custom scrollbar (webkit) ─── */

@@ -55,11 +55,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ activePage, onNavigate, follow
               className={`nav-item ${isActive ? 'active' : ''}`}
               onClick={() => onNavigate(item.id)}
               aria-label={item.label}
+              aria-current={isActive ? 'page' : undefined}
             >
               <Icon size={17} strokeWidth={2} className="nav-icon" />
               <span>{item.label}</span>
               {badge !== null && badge > 0 && (
-                <span className="nav-badge">{badge}</span>
+                <span className="nav-badge" aria-label={`${badge} unread items`}>{badge}</span>
               )}
             </button>
           );
@@ -67,7 +68,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activePage, onNavigate, follow
       </nav>
 
       {/* Bottom Nav */}
-      <div className="sidebar-bottom">
+      <div className="sidebar-bottom" role="navigation" aria-label="Secondary navigation">
         {NAV_BOTTOM.map(item => {
           const Icon = item.icon;
           const isActive = activePage === item.id;
@@ -77,6 +78,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activePage, onNavigate, follow
               className={`nav-item ${isActive ? 'active' : ''}`}
               onClick={() => onNavigate(item.id)}
               aria-label={item.label}
+              aria-current={isActive ? 'page' : undefined}
             >
               <Icon size={17} strokeWidth={2} className="nav-icon" />
               <span>{item.label}</span>

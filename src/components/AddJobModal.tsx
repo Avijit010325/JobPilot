@@ -112,7 +112,7 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({ profile, onSave, onClo
 
   return (
     <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="modal" style={{ maxWidth: 580 }}>
+      <div className="modal" role="dialog" aria-modal="true" aria-labelledby="add-job-modal-title" style={{ maxWidth: 580 }}>
         {/* Header */}
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -120,11 +120,11 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({ profile, onSave, onClo
               <Sparkles size={20} color="#fff" />
             </div>
             <div>
-              <h2 style={{ fontSize: '1.1rem', fontWeight: 800 }}>Add Target Job</h2>
+              <h2 id="add-job-modal-title" style={{ fontSize: '1.1rem', fontWeight: 800 }}>Add Target Job</h2>
               <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: 2 }}>Paste job details — AI will score match against your profile</p>
             </div>
           </div>
-          <button className="btn-icon btn-ghost" onClick={onClose} aria-label="Close">
+          <button className="btn-icon btn-ghost" onClick={onClose} aria-label="Close dialog">
             <X size={18} />
           </button>
         </div>
@@ -132,30 +132,30 @@ export const AddJobModal: React.FC<AddJobModalProps> = ({ profile, onSave, onClo
         <form onSubmit={handleSubmit}>
           <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {error && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', background: 'var(--red-dim)', border: '1px solid var(--red-border)', borderRadius: 10, color: 'var(--red)', fontSize: '0.82rem', fontWeight: 500 }}>
+              <div role="alert" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', background: 'var(--red-dim)', border: '1px solid var(--red-border)', borderRadius: 10, color: 'var(--red)', fontSize: '0.82rem', fontWeight: 500 }}>
                 <AlertTriangle size={15} /> {error}
               </div>
             )}
 
             <div className="grid-2" style={{ gap: 12 }}>
               <div className="field">
-                <label className="field-label">Company *</label>
-                <input className="input" required placeholder="e.g. Stripe, Vercel" value={company} onChange={e => setCompany(e.target.value)} />
+                <label htmlFor="company-input" className="field-label">Company *</label>
+                <input id="company-input" className="input" required placeholder="e.g. Stripe, Vercel" value={company} onChange={e => setCompany(e.target.value)} />
               </div>
               <div className="field">
-                <label className="field-label">Role Title *</label>
-                <input className="input" required placeholder="e.g. Senior Frontend Engineer" value={title} onChange={e => setTitle(e.target.value)} />
+                <label htmlFor="role-input" className="field-label">Role Title *</label>
+                <input id="role-input" className="input" required placeholder="e.g. Senior Frontend Engineer" value={title} onChange={e => setTitle(e.target.value)} />
               </div>
             </div>
 
             <div className="grid-2" style={{ gap: 12 }}>
               <div className="field">
-                <label className="field-label">Location</label>
-                <input className="input" placeholder="e.g. San Francisco / Remote" value={location} onChange={e => setLocation(e.target.value)} />
+                <label htmlFor="location-input" className="field-label">Location</label>
+                <input id="location-input" className="input" placeholder="e.g. San Francisco / Remote" value={location} onChange={e => setLocation(e.target.value)} />
               </div>
               <div className="field">
-                <label className="field-label">Work Type</label>
-                <select className="select input" value={locationType} onChange={e => setLocationType(e.target.value as 'remote' | 'hybrid' | 'onsite')}>
+                <label htmlFor="worktype-input" className="field-label">Work Type</label>
+                <select id="worktype-input" className="select input" value={locationType} onChange={e => setLocationType(e.target.value as 'remote' | 'hybrid' | 'onsite')}>
                   <option value="remote">Remote</option>
                   <option value="hybrid">Hybrid</option>
                   <option value="onsite">On-site</option>
