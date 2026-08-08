@@ -16,7 +16,7 @@ import { ChatBot } from './components/ChatBot';
 import { seedProfile, seedJobs, seedApplications, seedActivity } from './lib/data';
 import { computeNeedsFollowUp } from './lib/ai';
 import type { AuthUser } from './lib/auth';
-import { loadSession, clearSession, saveSession } from './lib/auth';
+import { clearSession, saveSession } from './lib/auth';
 import type {
   NavPage, CandidateProfile, JobListing, JobApplication,
   AppStatus, ActivityEntry, AppNotification,
