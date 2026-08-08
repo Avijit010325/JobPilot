@@ -7,10 +7,12 @@ import {
 import { getFirestore } from 'firebase/firestore';
 
 /**
- * Firebase Client Config with environment fallback
+ * Firebase Client Config with Google Gemini / Camera Vision API support
  */
+export const FIREBASE_API_KEY = 'AIzaSyC0sxg_DcmL4sIEmdcRU7cRsoW9RBvKtyA';
+
 const firebaseConfig = {
-  apiKey: 'AIzaSyDemoJobPilotClientApiKey123456789',
+  apiKey: FIREBASE_API_KEY,
   authDomain: 'jobpilot-ai-assistant.firebaseapp.com',
   projectId: 'jobpilot-ai-assistant',
   storageBucket: 'jobpilot-ai-assistant.appspot.com',
