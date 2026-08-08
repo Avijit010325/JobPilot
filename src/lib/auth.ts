@@ -79,16 +79,34 @@ export function clearSession(): void {
 }
 
 /* ──────────────────────────────────────────────────────
+   Email validation (strict format: user@domain.tld)
+─────────────────────────────────────────────────────── */
+export function isValidEmail(email: string): boolean {
+  if (!email || typeof email !== 'string') return false;
+  const normalized = email.trim().toLowerCase();
+  const re = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+  if (!re.test(normalized)) return false;
+  const parts = normalized.split('@');
+  if (parts.length !== 2) return false;
+  const [local, domain] = parts;
+  if (!local || local.length > 64) return false;
+  if (!domain || domain.length > 255 || !domain.includes('.')) return false;
+  const tld = domain.split('.').pop();
+  if (!tld || tld.length < 2) return false;
+  return true;
+}
+
+/* ──────────────────────────────────────────────────────
    Register a new email account (strict — blocks duplicates)
 ─────────────────────────────────────────────────────── */
 export function registerAccount(name: string, email: string, password: string): AuthUser {
   const normalized = email.trim().toLowerCase();
 
-  if (!normalized.includes('@') || !normalized.includes('.')) {
-    throw new Error('Please enter a valid email address.');
+  if (!isValidEmail(normalized)) {
+    throw new Error('Please enter a valid, complete email address (e.g. user@gmail.com).');
   }
-  if (!name.trim()) {
-    throw new Error('Please enter your full name.');
+  if (!name.trim() || name.trim().length < 2) {
+    throw new Error('Please enter your full name (at least 2 characters).');
   }
   if (password.length < 8) {
     throw new Error('Password must be at least 8 characters long.');
@@ -129,6 +147,11 @@ export function registerAccount(name: string, email: string, password: string): 
 ─────────────────────────────────────────────────────── */
 export function verifyAndLogin(email: string, password: string): AuthUser {
   const normalized = email.trim().toLowerCase();
+
+  if (!isValidEmail(normalized)) {
+    throw new Error('Please enter a valid, complete email address (e.g. user@gmail.com).');
+  }
+
   const user = findUserByEmail(normalized);
 
   if (!user) {
@@ -138,7 +161,7 @@ export function verifyAndLogin(email: string, password: string): AuthUser {
   // Block login if password is wrong — no bypass allowed
   if (!user.passwordHash) {
     throw new Error(
-      'This account was registered using a social provider (Apple/LinkedIn). Please sign in using that method.'
+      'This account was registered using a social provider (Google/Apple/LinkedIn). Please sign in using that method.'
     );
   }
 
@@ -159,7 +182,7 @@ export function verifyAndLogin(email: string, password: string): AuthUser {
 
 /* ──────────────────────────────────────────────────────
    Social Login — requires real user-supplied email & name.
-   The user must supply their actual Apple ID or LinkedIn email.
+   The user must supply their actual Apple ID, Google, or LinkedIn email.
    If no account exists for that email/provider, one is created.
    If an account exists but was created via a different provider,
    it throws an error.
@@ -171,11 +194,11 @@ export function socialLogin(
 ): AuthUser {
   const normalized = email.trim().toLowerCase();
 
-  if (!normalized.includes('@')) {
-    throw new Error('Please enter a valid email address associated with your account.');
+  if (!isValidEmail(normalized)) {
+    throw new Error('Please enter a valid, complete email address (e.g. yourname@gmail.com).');
   }
-  if (!name.trim()) {
-    throw new Error('Please enter your full name.');
+  if (!name.trim() || name.trim().length < 2) {
+    throw new Error('Please enter your full name (at least 2 characters).');
   }
 
   const existing = findUserByEmail(normalized);

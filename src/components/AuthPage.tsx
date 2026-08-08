@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import type { AuthUser } from '../lib/auth';
 import {
-  registerAccount, verifyAndLogin, socialLogin
+  registerAccount, verifyAndLogin, socialLogin, isValidEmail
 } from '../lib/auth';
 import {
   Eye, EyeOff, Mail, Lock, User, AlertCircle, CheckCircle2,
@@ -103,8 +103,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onAuth }) => {
     clearFeedback();
 
     const normalizedEmail = email.trim().toLowerCase();
-    if (!normalizedEmail.includes('@')) {
-      setError('Please enter a valid email address.');
+    if (!isValidEmail(normalizedEmail)) {
+      setError('Please enter a complete, valid email address (e.g. user@gmail.com).');
       return;
     }
 
@@ -167,8 +167,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({ onAuth }) => {
     const trimmedEmail = socialStep.socialEmail.trim().toLowerCase();
     const trimmedName = socialStep.socialName.trim();
 
-    if (!trimmedEmail.includes('@')) {
-      setSocialStep(s => s ? { ...s, socialError: 'Please enter a valid email address.' } : s);
+    if (!isValidEmail(trimmedEmail)) {
+      setSocialStep(s => s ? { ...s, socialError: 'Please enter a complete, valid email address (e.g. user@gmail.com).' } : s);
       return;
     }
     if (!trimmedName) {
