@@ -19,26 +19,62 @@ export interface RegisteredAccount {
 const STORAGE_KEY = 'jobpilot_registered_users_v1';
 const SESSION_KEY = 'jobpilot_session_v1';
 
+// In-memory fallback for environments without persistent localStorage (e.g. Node / Vitest)
+let memoryUsers: RegisteredAccount[] | null = null;
+let memorySession: string | null = null;
+
+function getStorageItem(key: string): string | null {
+  try {
+    if (typeof localStorage !== 'undefined') {
+      return localStorage.getItem(key);
+    }
+  } catch {}
+  return key === STORAGE_KEY ? (memoryUsers ? JSON.stringify(memoryUsers) : null) : memorySession;
+}
+
+function setStorageItem(key: string, value: string): void {
+  try {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(key, value);
+    }
+  } catch {}
+  if (key === STORAGE_KEY) {
+    try { memoryUsers = JSON.parse(value); } catch {}
+  } else {
+    memorySession = value;
+  }
+}
+
+function removeStorageItem(key: string): void {
+  try {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem(key);
+    }
+  } catch {}
+  if (key === STORAGE_KEY) {
+    memoryUsers = [];
+  } else {
+    memorySession = null;
+  }
+}
+
 /* ──────────────────────────────────────────────────────
-   Helpers: read / write the user registry to localStorage
+   Helpers: read / write the user registry
 ─────────────────────────────────────────────────────── */
 export function getRegisteredUsers(): RegisteredAccount[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
+    const raw = getStorageItem(STORAGE_KEY);
+    if (!raw) return memoryUsers || [];
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
   } catch {
-    return [];
+    return memoryUsers || [];
   }
 }
 
 export function saveRegisteredUsers(users: RegisteredAccount[]): void {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
-  } catch {
-    // localStorage might be unavailable
-  }
+  memoryUsers = users;
+  setStorageItem(STORAGE_KEY, JSON.stringify(users));
 }
 
 export function findUserByEmail(email: string): RegisteredAccount | undefined {
@@ -51,17 +87,14 @@ export function findUserByEmail(email: string): RegisteredAccount | undefined {
    Session helpers (persist login across page refresh)
 ─────────────────────────────────────────────────────── */
 export function saveSession(user: AuthUser): void {
-  try {
-    localStorage.setItem(SESSION_KEY, JSON.stringify(user));
-  } catch {}
+  setStorageItem(SESSION_KEY, JSON.stringify(user));
 }
 
 export function loadSession(): AuthUser | null {
   try {
-    const raw = localStorage.getItem(SESSION_KEY);
+    const raw = getStorageItem(SESSION_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    // Validate it still corresponds to a registered user
     if (parsed?.uid && parsed?.email && parsed?.provider) {
       const stillExists = getRegisteredUsers().some(u => u.uid === parsed.uid);
       return stillExists ? (parsed as AuthUser) : null;
@@ -73,9 +106,7 @@ export function loadSession(): AuthUser | null {
 }
 
 export function clearSession(): void {
-  try {
-    localStorage.removeItem(SESSION_KEY);
-  } catch {}
+  removeStorageItem(SESSION_KEY);
 }
 
 /* ──────────────────────────────────────────────────────
