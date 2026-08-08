@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Candidate Profiles: Only owner can read/write their own profile
+    match /users/{userId}/profile/{docId} {
+      allow read, write: if isOwner(userId);
+    }
+    
+    // User Jobs: Strictly isolated per user UID to prevent IDOR
+    match /users/{userId}/jobs/{jobId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // User Applications: Strictly isolated per user UID to prevent IDOR
+    match /users/{userId}/applications/{applicationId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // User Activity logs: Strictly isolated
+    match /users/{userId}/activity/{activityId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Notifications: Strictly isolated
+    match /users/{userId}/notifications/{notificationId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Default deny for all other unmatched collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
